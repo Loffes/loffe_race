@@ -11,29 +11,6 @@ local ready_state = false
 
 local in_online_race = false
 
-local showCoords = false
-
-RegisterCommand("coords", function(source)
-    showCoords = not showCoords
-	while showCoords do
-        Wait(1)
-        if not cinema then
-        local entityCoords = GetEntityCoords(GetPlayerPed(-1))
-            SetTextFont(4)
-
-            SetTextProportional(0)
-
-            SetTextScale(0.8, 0.8)
-
-            BeginTextCommandDisplayText("STRING")
-
-            AddTextComponentSubstringPlayerName('~g~ X  = ~w~' .. round2(entityCoords.x, 2) .. '~g~ Y = ~w~' .. round2(entityCoords.y, 2) .. '~g~ Z  =~w~ ' .. round2(entityCoords.z-0.85, 2) ..  '~g~ H =~w~ ' .. math.ceil(GetEntityHeading(GetPlayerPed(-1))))
-
-            EndTextCommandDisplayText(0.656, 0.00)
-        end
-	end
-end, false)
-
 Citizen.CreateThread(function()
     for k,v in pairs(Config.OnlineRace) do
         blip = AddBlipForCoord(v.Start.x, v.Start.y, v.Start.z)
@@ -52,10 +29,6 @@ Citizen.CreateThread(function()
         EndTextCommandSetBlipName(blip)
     end
 end)
-
-function round2(num, numDecimalPlaces)
-  return tonumber(string.format("%." .. (numDecimalPlaces or 0) .. "f", num))
-end
 
 local canRace = true
 
