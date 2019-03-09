@@ -75,11 +75,18 @@ AddEventHandler('loffe_race:onlinerace_cantstart', function()
     ESX.ShowNotification('Någon annan kör redan detta racet, vänta tills de är klara!')
 end)
 
+RegisterNetEvent('loffe_race:end_race_cl')
+AddEventHandler('loffe_race:end_race_cl', function()
+    if in_online_race ~= false then
+        TriggerServerEvent('loffe_race:end_online_race', in_online_race)
+    end
+end)
+
 RegisterNetEvent('loffe_race:start_online_race')
 AddEventHandler('loffe_race:start_online_race', function(_race, position)
     local race = _race
     TriggerServerEvent('loffe_race:not_ready_online_race', race)
-    in_online_race = true
+    in_online_race = race
     ready_state = false
     local pP = PlayerPedId()
     FreezeEntityPosition(pP, false)
@@ -130,6 +137,8 @@ AddEventHandler('loffe_race:start_online_race', function(_race, position)
     local row_in_table = 1
 
     online_race_leaderboard = {}
+
+    Wait(150)
 
     for i=1, Config.OnlineRace[race].Players do
         table.insert(online_race_leaderboard, {[race] = {[i] = {checkpoint = 0}}})
@@ -279,7 +288,7 @@ Citizen.CreateThread(function()
             local coords = GetEntityCoords(ped)
             local v = c.Start
             local raceReady = 0
-            if GetDistanceBetweenCoords(coords, v.x, v.y, v.z, true) < 50.0 and not in_online_race then
+            if GetDistanceBetweenCoords(coords, v.x, v.y, v.z, true) < 50.0 and in_online_race == false then
                 DrawMarker(27, v.x, v.y, v.z, 0.0, 0.0, 0.0, 0, 0.0, 0.0, c.Size, c.Size, 1.5, 50, 255, 50, 150, false, true, 2, false, false, false, false)
                 if GetDistanceBetweenCoords(coords, v.x, v.y, v.z, true) < c.Size + 0.2 then
                     BeginTextCommandDisplayHelp('STRING')
