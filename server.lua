@@ -1,6 +1,11 @@
 ESX = nil
 TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
 
+AddEventHandler('playerDropped', function()
+    local _source = source
+    TriggerClientEvent('loffe_race:end_race_cl', _source)
+end)
+
 local readyPlayers = {}
 
 local online_race_leaderboard = {}
@@ -12,7 +17,8 @@ AddEventHandler('loffe_race:online_race_update', function(race, player, position
     for i=1, #online_race_leaderboard do
         if online_race_leaderboard[i].R == race then
             if online_race_leaderboard[i][race].p == player then
-                online_race_leaderboard[i][race][player].checkpoints = position
+                TriggerClientEvent('loffe_race:print', source, online_race_leaderboard[i][race].checkpoints)
+                online_race_leaderboard[i][race].checkpoints = position
             end
         end
     end
@@ -25,16 +31,21 @@ AddEventHandler('loffe_race:end_online_race', function(race)
             online_race_in_progress[i].R = false
         end
     end
+    for i=1, #online_race_leaderboard do
+        if online_race_leaderboard[i].R == race then
+            online_race_leaderboard[i].R = false
+        end
+    end
 end)
 
 RegisterServerEvent('loffe_race:get_online_race_position')
 AddEventHandler('loffe_race:get_online_race_position', function(race)
     local _source = source
 
-    for i=1, #online_race_leaderboard do
-        if online_race_leaderboard[i].R == race then
-            for x=1, Config.OnlineRace[race].Players do
-                TriggerClientEvent('loffe_race:get_online_race_position_client', _source, race, online_race_leaderboard[i][race][i].checkpoints, i)
+    for i=1, Config.OnlineRace[race].Players do
+        for x=1, #online_race_leaderboard do
+            if online_race_leaderboard[x].R == race then
+                TriggerClientEvent('loffe_race:get_online_race_position_client', _source, race, online_race_leaderboard[x][race].checkpoints, online_race_leaderboard[x][race].p)
             end
         end
     end
@@ -74,7 +85,7 @@ AddEventHandler('loffe_race:ready_online_race', function(race)
         local position = 1
         if ready == Config.OnlineRace[race].Players then
             for i=1, Config.OnlineRace[race].Players do
-                local data = {R = race, [race] = {[i] = {checkpoints = 0}, p = i}}
+                local data = {R = race, [race] = {checkpoints = 0, p = i}}
                 table.insert(online_race_leaderboard, data)
             end
             for i=1, #readyPlayers do
