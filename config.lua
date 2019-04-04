@@ -12,7 +12,7 @@ Config.TPBack = true -- tp spelare till där man startar när racet är slut
 Config.OnlineRace = {
     [1] = {
         Players = 3,
-        Type = 'street_race', -- 'street_race' = eget fordon, 'event' = man får fordon
+        Type = 'street_race', -- 'street_race' = eget fordon, 'event' = man får fordon 'street_race' your own vehicle, 'event' you spawn with a vehicle
         Text = 'Klicka ~INPUT_CONTEXT~ för att köra ett race mot 2 andra spelare! (Eget fordon)',
         Start = {x = 2518.32, y = 1976.36, z = 19.09},
         Size = 5.5, 
